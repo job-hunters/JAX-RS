@@ -2,6 +2,8 @@ package com.demo.message;
 
 import java.util.stream.Collectors;
 
+import com.demo.comment.CommentController;
+
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -56,10 +58,16 @@ public class MessageController {
 		messageService.deleteMessage(messageId);
 		return Response.noContent().build();
 	}
+	
+	@Path("{messageId}/comments")
+	public CommentController getCommentController() {
+		return new CommentController();
+	}
 
 	private Message getHateoas(Message message, UriInfo uriInfo) {
-		String uri = uriInfo.getBaseUriBuilder().path(this.getClass()).path(Long.toString(message.getId())).build().toString();
-		message.addLink("self", uri);
+		UriBuilder builder = uriInfo.getBaseUriBuilder().path(this.getClass()).path(Long.toString(message.getId()));
+		message.addLink("self", builder.build().toString());
+		message.addLink("comments", builder.path("comments").build().toString());
 		return message;
 	}
 	

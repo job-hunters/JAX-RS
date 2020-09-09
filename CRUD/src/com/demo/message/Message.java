@@ -6,8 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.demo.comment.Comment;
 import com.demo.dao.DatabaseClass;
 import com.demo.hateoas.Link;
+
+import jakarta.xml.bind.annotation.XmlTransient;
 
 public class Message {
 
@@ -15,11 +18,10 @@ public class Message {
 	private String message;
 	private String owner;
 	private Date created;
+	private List<Comment> comments;
 	private Set<Link> links;
 
-	// required for the Message Body Object Mapping
-	public Message() {
-	}
+	public Message() {}
 
 	public Message(String message, String owner) {
 		super();
@@ -27,6 +29,7 @@ public class Message {
 		this.message = message;
 		this.owner = owner;
 		this.created = new Date();
+		this.comments = new ArrayList<Comment>();
 		this.links = new HashSet<Link>();
 	}
 
@@ -55,8 +58,17 @@ public class Message {
 	}
 
 	public Date getCreated() {
-		// TODO Date Format
 		return created;
+	}
+	//exclude comments by renaming the getter
+	//XmlTransient doesn't work
+	@XmlTransient
+	public List<Comment> comments() {
+		return comments;
+	}
+
+	public void addComment(Comment comment) {
+		this.comments.add(comment);
 	}
 
 	public void setCreated(Date created) {
@@ -71,9 +83,4 @@ public class Message {
 		this.links.add(new Link(rel, link));
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		Message msg = (Message) obj;
-		return msg.getId() == this.getId();
-	}
 }

@@ -12,7 +12,7 @@ public class DatabaseClass {
 	static {
 		messages.add(new Message("Hello", "Shafi"));
 		messages.add(new Message("Hi", "Sanjay"));
-		messages.add(new Message("How r u?", "Raj"));
+		messages.add(new Message("H", "Raj"));
 	}
 
 	public static List<Message> getMessages() {
@@ -22,5 +22,5 @@ public class DatabaseClass {
 	public static long getNewId() {
 		return (++id);
 	}
-
+	
 }

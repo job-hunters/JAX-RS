@@ -9,7 +9,7 @@ public class Link {
 		super();
 	}
 
-	public Link(String link, String rel) {
+	public Link( String rel, String link) {
 		super();
 		this.link = link;
 		this.rel = rel;
@@ -39,6 +39,6 @@ public class Link {
 	
 	@Override
 	public int hashCode() {
-		return 1;
+		return this.link.hashCode();
 	}
 }
