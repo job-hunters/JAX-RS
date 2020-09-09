@@ -1,5 +1,7 @@
 package com.demo.message;
 
+import java.util.stream.Collectors;
+
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -24,8 +26,8 @@ public class MessageController {
 	@Path("")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getMessages() {
-		return Response.ok(messageService.getMessages()).build();
+	public Response getMessages(@Context UriInfo uriInfo) {
+		return Response.ok(messageService.getMessages().stream().map( message -> this.getHateoas(message, uriInfo)).collect(Collectors.toList())).build();
 	}
 
 	@Path("{messageId}")
@@ -33,7 +35,7 @@ public class MessageController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMessage(@PathParam("messageId") long messageId, @Context UriInfo uriInfo) {
 		Message msg = messageService.getMessageById(messageId);
-		msg.addLink("self", uriInfo.getAbsolutePath().toString());
+		getHateoas(msg, uriInfo);
 		return Response.ok(msg).build();
 	}
 
@@ -55,4 +57,10 @@ public class MessageController {
 		return Response.noContent().build();
 	}
 
+	private Message getHateoas(Message message, UriInfo uriInfo) {
+		String uri = uriInfo.getBaseUriBuilder().path(this.getClass()).path(Long.toString(message.getId())).build().toString();
+		message.addLink("self", uri);
+		return message;
+	}
+	
 }
