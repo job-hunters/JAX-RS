@@ -1,6 +1,7 @@
 package com.demo.message;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.demo.dao.DatabaseClass;
@@ -14,7 +15,7 @@ public class MessageService {
 	public Message getMessageById(long messageId) {
 
 		return DatabaseClass.getMessages().stream().filter(message -> message.getId() == messageId).findFirst()
-				.orElse(null);
+				.orElseThrow(() -> new NoSuchElementException ("No Data Found"));
 	}
 
 	public Message addMessage(Message message) {
@@ -24,11 +25,13 @@ public class MessageService {
 	}
 
 	public void deleteMessage(long id) {
-		Optional<Message> msg = DatabaseClass.getMessages()
+		Optional<Message> msgOptional = DatabaseClass.getMessages()
 				.stream()
 				.filter(message -> message.getId() == id)
 				.findFirst();
-		msg.ifPresent(name ->DatabaseClass.getMessages().remove(msg.get()));
+		
+		msgOptional.map(name ->DatabaseClass.getMessages().remove(msgOptional.get()))
+				   .orElseThrow();
 	}
 
 }
