@@ -13,9 +13,9 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 
-//TODO Error handling
-//TODO Authentication
 //TODO Multiple Data Format
+//TODO Sub resource
+//TODO Comments
 @Path("messages")
 public class MessageController {
 
@@ -31,8 +31,10 @@ public class MessageController {
 	@Path("{messageId}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getMessage(@PathParam("messageId") String messageId) {
-		return Response.ok(messageService.getMessageById(Long.parseLong(messageId))).build();
+	public Response getMessage(@PathParam("messageId") long messageId, @Context UriInfo uriInfo) {
+		Message msg = messageService.getMessageById(messageId);
+		msg.addLink("self", uriInfo.getAbsolutePath().toString());
+		return Response.ok(msg).build();
 	}
 
 	@Path("")
@@ -41,15 +43,15 @@ public class MessageController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addMessage(Message message, @Context UriInfo uriInfo) {
 		Message newMessage = messageService.addMessage(message);
-        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-        uriBuilder.path(Long.toString(newMessage.getId()));
+		UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+		uriBuilder.path(Long.toString(newMessage.getId()));
 		return Response.created(uriBuilder.build()).entity(newMessage).build();
 	}
 
 	@Path("{messageId}")
 	@DELETE
-	public Response deleteMessage(@PathParam("messageId") String messageId) {
-		messageService.deleteMessage(Long.parseLong(messageId));
+	public Response deleteMessage(@PathParam("messageId") long messageId) {
+		messageService.deleteMessage(messageId);
 		return Response.noContent().build();
 	}
 

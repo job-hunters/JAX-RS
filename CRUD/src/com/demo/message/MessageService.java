@@ -1,10 +1,11 @@
 package com.demo.message;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.demo.dao.DatabaseClass;
+
+import jakarta.ws.rs.NotFoundException;
 
 public class MessageService {
 
@@ -15,7 +16,7 @@ public class MessageService {
 	public Message getMessageById(long messageId) {
 
 		return DatabaseClass.getMessages().stream().filter(message -> message.getId() == messageId).findFirst()
-				.orElseThrow(() -> new NoSuchElementException ("No Data Found"));
+				.orElseThrow(NotFoundException::new);
 	}
 
 	public Message addMessage(Message message) {
@@ -31,7 +32,7 @@ public class MessageService {
 				.findFirst();
 		
 		msgOptional.map(name ->DatabaseClass.getMessages().remove(msgOptional.get()))
-				   .orElseThrow();
+				   .orElseThrow(NotFoundException::new);
 	}
 
 }
